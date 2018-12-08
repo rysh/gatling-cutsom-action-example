@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class CustomeActionSimulation extends Simulation {
   var counter = new AtomicInteger
-
   val scn = scenario("Scenario Name")
     .exec(
       new CustomActionBuilder(
@@ -35,7 +34,6 @@ class CustomActionBuilder(name: String, func: () => Status)
   override def build(ctx: ScenarioContext, next: Action): Action =
     new CustomAction(name, ctx.coreComponents.statsEngine, func, next)
 }
-
 class CustomAction(val name: String,
                    val statsEngine: StatsEngine,
                    func: () => Status,
@@ -56,3 +54,4 @@ class CustomAction(val name: String,
     next ! session
   }
 }
+
