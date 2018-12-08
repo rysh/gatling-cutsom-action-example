@@ -14,28 +14,33 @@ class CustomeActionSimulation extends Simulation {
   var counter = new AtomicInteger
 
   val scn = scenario("Scenario Name")
-    .exec(new CustomActionBuilder(() => {
-      val num = counter.getAndAdd(1).toInt
-      println(s"***hoge$num start***")
-      Thread.sleep((3000 * Math.random()).toInt)
-      println(s"***hoge$num end***")
-      OK
-    }))
+    .exec(
+      new CustomActionBuilder(
+        "hoge",
+        () => {
+          val num = counter.getAndAdd(1).toInt
+          println(s"***hoge$num start***")
+          Thread.sleep((3000 * Math.random()).toInt)
+          println(s"***hoge$num end***")
+          OK
+        }
+      )
+    )
 
-  setUp(scn.inject(atOnceUsers(5)))
+  setUp(scn.inject(constantUsersPerSec(5) during (5)))
 }
 
-class CustomActionBuilder(func: () => Status) extends ActionBuilder {
+class CustomActionBuilder(name: String, func: () => Status)
+    extends ActionBuilder {
   override def build(ctx: ScenarioContext, next: Action): Action =
-    new CustomAction(ctx.coreComponents.statsEngine, func, next)
+    new CustomAction(name, ctx.coreComponents.statsEngine, func, next)
 }
 
-class CustomAction(val statsEngine: StatsEngine,
+class CustomAction(val name: String,
+                   val statsEngine: StatsEngine,
                    func: () => Status,
                    val next: Action)
-    extends Action
-    with NameGen {
-  override def name: String = genName("Hoge")
+    extends Action {
 
   override def execute(session: Session): Unit = {
     val start = System.currentTimeMillis
