@@ -1,5 +1,7 @@
 Gatling with SBT Custom Action demo
 =========================
+この記事のサンプルコードです。
+https://qiita.com/cactaceae/items/d4b1444fcc44822f2239
 
 Start SBT
 ---------
